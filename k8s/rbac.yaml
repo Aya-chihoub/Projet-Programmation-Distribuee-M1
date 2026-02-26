@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: book-service-sa
+  labels:
+    app: book-service
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: postgres-sa
+  labels:
+    app: postgres
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: book-service-role
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "services"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: postgres-role
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: book-service-rolebinding
+subjects:
+  - kind: ServiceAccount
+    name: book-service-sa
+roleRef:
+  kind: Role
+  name: book-service-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: postgres-rolebinding
+subjects:
+  - kind: ServiceAccount
+    name: postgres-sa
+roleRef:
+  kind: Role
+  name: postgres-role
+  apiGroup: rbac.authorization.k8s.io
