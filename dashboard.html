@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Master 1 AI - Bookstore System</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        .book-card { border: 1px solid #eee; padding: 15px; margin: 10px 0; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; }
+        button { background: #27ae60; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #219150; }
+        .status { margin-top: 20px; padding: 10px; border-radius: 4px; display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Bookstore Microservices</h1>
+        <div id="status-box" class="status"></div>
+        
+        <h3>Available Books</h3>
+        <div id="book-list">Loading books from cluster...</div>
+
+        <h3>Recent Orders</h3>
+        <div id="order-list">No orders yet.</div>
+    </div>
+
+    <script>
+        const API_BASE = "http://localhost/api";
+
+        async function loadData() {
+            try {
+                // Fetch Books
+                const bRes = await fetch(`${API_BASE}/books`);
+                const books = await bRes.json();
+                document.getElementById('book-list').innerHTML = books.map(b => `
+                    <div class="book-card">
+                        <span><strong>${b.title}</strong> by ${b.author} - $${b.price}</span>
+                        <button onclick="placeOrder(${b.id})">Order Now</button>
+                    </div>
+                `).join('');
+
+                // Fetch Orders
+                const oRes = await fetch(`${API_BASE}/orders`);
+                const orders = await oRes.json();
+                document.getElementById('order-list').innerHTML = orders.map(o => `
+                    <div style="font-size: 0.9em; color: #666; border-bottom: 1px solid #eee; padding: 5px 0;">
+                        Order #${o.id}: Book ID ${o.book_id} for ${o.customer_name} (${o.status})
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error("Connection failed", err);
+            }
+        }
+
+        async function placeOrder(bookId) {
+            const statusBox = document.getElementById('status-box');
+            try {
+                const res = await fetch(`${API_BASE}/orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ book_id: bookId, customer_name: "Nour (Web UI)", quantity: 1 })
+                });
+                if (res.ok) {
+                    statusBox.style.display = 'block';
+                    statusBox.style.background = '#d4edda';
+                    statusBox.innerText = "Order placed successfully!";
+                    loadData(); // Refresh list
+                }
+            } catch (err) {
+                statusBox.style.display = 'block';
+                statusBox.style.background = '#f8d7da';
+                statusBox.innerText = "Error placing order.";
+            }
+        }
+
+        loadData();
+        setInterval(loadData, 5000); // Auto-refresh every 5 seconds
+    </script>
+</body>
+</html>
