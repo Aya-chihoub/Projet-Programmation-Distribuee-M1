@@ -110,6 +110,17 @@ curl -X POST http://localhost:3001/api/orders -H "Content-Type: application/json
 
 Le order-service appelle automatiquement le book-service via le DNS Kubernetes pour verifier que le livre existe.
 
+### 6. Interface Web (Dashboard)
+
+Ouvrir le fichier `dashboard.html` dans un navigateur. L'interface permet de :
+- Visualiser la liste des livres disponibles
+- Passer des commandes en un clic
+- Consulter les commandes recentes
+
+L'interface se rafraichit automatiquement toutes les 5 secondes.
+
+**Note** : L'Ingress doit etre actif et accessible sur `http://localhost` pour que l'interface fonctionne. Lancer `minikube tunnel` dans un terminal separe si necessaire.
+
 ## Endpoints API
 
 ### book-service (port 3000)
@@ -162,5 +173,6 @@ Le order-service appelle automatiquement le book-service via le DNS Kubernetes p
 │   ├── postgres-pvc.yaml
 │   ├── ingress.yaml
 │   └── rbac.yaml
+├── dashboard.html
 └── README.md
 ```
