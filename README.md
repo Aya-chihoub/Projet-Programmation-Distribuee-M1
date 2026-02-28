@@ -4,8 +4,8 @@
 
 Ce projet implemente une librairie en ligne utilisant une architecture microservices orchestree par Kubernetes. Il demontre la communication inter-services, le stockage persistant, la securite RBAC et le routage via un Ingress Gateway.
 
-**Etudiants** : Aya, Nour
-**Formation** : Master 1 Informatique
+**Etudiantes** : Aya CHIHOUB, Nour khelassi
+**Formation** : Master 1 VMI
 **Professeur** : Benoit Charroux
 
 ## Architecture
