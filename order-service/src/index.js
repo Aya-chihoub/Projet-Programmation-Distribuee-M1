@@ -90,7 +90,7 @@ async function startServer() {
       await initDB();
       connected = true;
       app.listen(PORT, () => {
-        console.log(`🚀 Order-service is live on port ${PORT}`);
+        console.log(` Order-service is live on port ${PORT}`);
       });
     } catch (err) {
       console.error(`❌ DB not ready (Attempt ${attempts}): ${err.message}`);
